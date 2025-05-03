@@ -3,6 +3,7 @@
 import React, { useRef, useEffect, useState } from 'react'
 import * as THREE from 'three'
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader'
+import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls'
 
 const HomePage: React.FC = () => {
 
@@ -21,7 +22,7 @@ const HomePage: React.FC = () => {
       0.1,
       1000
     )
-    camera.position.set(0.2, 0.6, 2.8)
+    camera.position.set(0, 0.6, 2.8)
 
     const renderer = new THREE.WebGLRenderer({ antialias: true })
     renderer.setSize(container.clientWidth, container.clientHeight)
@@ -33,13 +34,19 @@ const HomePage: React.FC = () => {
     dirLight.position.set(5, 10, 7.5)
     scene.add(dirLight)
 
+    const controls = new OrbitControls(camera, renderer.domElement)
+    controls.target.set(0, 0.6, 0)
+    controls.enableZoom = false
+    controls.enableDamping = true
+    controls.dampingFactor = 0.05
+    controls.enablePan = false
+
     const loader = new GLTFLoader()
     loader.load(
       '/models/programmer.glb',
       (gltf: any) => {
         const model = gltf.scene
         model.scale.setScalar(0.17)
-        model.position.set(0, 0, 0)
         scene.add(model)
       },
       (event: ProgressEvent<EventTarget>) => {
@@ -57,6 +64,7 @@ const HomePage: React.FC = () => {
       requestAnimationFrame(animate)
       const delta = clock.getDelta()
       scene.rotation.y += delta * 0.1
+      controls.update()
       renderer.render(scene, camera)
     }
     animate()
@@ -102,6 +110,7 @@ const HomePage: React.FC = () => {
         borderWidth: '2px',
         overflow: 'hidden',
         right: '10%',
+        top: '20%',
         position: 'absolute'
       }}
     >
