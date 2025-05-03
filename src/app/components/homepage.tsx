@@ -5,7 +5,6 @@ import * as THREE from 'three'
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader'
 
 const HomePage: React.FC = () => {
-  const [angle, setAngle] = useState(50);
 
   const mountRef = useRef<HTMLDivElement | null>(null)
 
@@ -17,12 +16,12 @@ const HomePage: React.FC = () => {
     scene.background = new THREE.Color(0xf0f0f0)
 
     const camera = new THREE.PerspectiveCamera(
-      angle,
+      50,
       container.clientWidth / container.clientHeight,
       0.1,
       1000
     )
-    camera.position.set(0, 1.5, 3)
+    camera.position.set(0.2, 0.6, 2.8)
 
     const renderer = new THREE.WebGLRenderer({ antialias: true })
     renderer.setSize(container.clientWidth, container.clientHeight)
@@ -39,7 +38,7 @@ const HomePage: React.FC = () => {
       '/models/programmer.glb',
       (gltf: any) => {
         const model = gltf.scene
-        model.scale.set(1.2, 1.2, 1.2)
+        model.scale.setScalar(0.17)
         model.position.set(0, 0, 0)
         scene.add(model)
       },
@@ -89,24 +88,23 @@ const HomePage: React.FC = () => {
 
       container.removeChild(renderer.domElement)
     }
-  }, [angle])
+  }, [])
 
   return (
     <div
       ref={mountRef}
       style={{
-        width: '100%',
-        height: '600px',
+        width: '500px',
+        height: '400px',
         borderRadius: '8px',
+        borderStyle: 'dashed',
+        borderColor: 'white',
+        borderWidth: '2px',
         overflow: 'hidden',
+        right: '10%',
+        position: 'absolute'
       }}
     >
-      <button
-        className='w-[100px] h-[100px] bg-blue-500 hover:bg-blue-300 text-white'
-        onClick={()=>setAngle(angle+20)}
-        >
-        Control
-      </button>
     </div>
   )
 }
