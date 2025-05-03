@@ -6,6 +6,9 @@ import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls'
 
 const HomePage: React.FC = () => {
+  const [lamp, setLamp] = useState(1)
+  const lampRef = useRef<THREE.PointLight | null>(null)
+  const intensityStep = 0.3
 
   const mountRef = useRef<HTMLDivElement | null>(null)
 
@@ -14,7 +17,7 @@ const HomePage: React.FC = () => {
     if (!container) return
 
     const scene = new THREE.Scene()
-    scene.background = new THREE.Color(0xf0f0f0)
+    scene.background = new THREE.Color(0x000000)
 
     const camera = new THREE.PerspectiveCamera(
       50,
@@ -34,6 +37,24 @@ const HomePage: React.FC = () => {
     dirLight.position.set(5, 10, 7.5)
     scene.add(dirLight)
 
+    // adding lamp light
+    const lampGeo = new THREE.SphereGeometry(0.05, 32, 32)
+    const lampMat = new THREE.MeshStandardMaterial({
+      color: 0xffff00,
+      emissive: 0xffff00,
+      emissiveIntensity: 10
+    })
+    lampMat.transparent = true
+
+    const lampMesh = new THREE.Mesh(lampGeo, lampMat)
+    lampMesh.position.set(0.26, 0.95, 0.53)
+    scene.add(lampMesh)
+
+    const lampLight = new THREE.PointLight(0xffffaa, 1, 2, 2)
+    lampLight.position.copy(lampMesh.position)
+    scene.add(lampLight)
+    lampRef.current = lampLight // stash into my ref
+
     const controls = new OrbitControls(camera, renderer.domElement)
     controls.target.set(0, 0.6, 0)
     controls.enableZoom = false
@@ -46,7 +67,7 @@ const HomePage: React.FC = () => {
       '/models/programmer.glb',
       (gltf: any) => {
         const model = gltf.scene
-        model.scale.setScalar(0.17)
+        model.scale.setScalar(0.13)
         scene.add(model)
       },
       (event: ProgressEvent<EventTarget>) => {
@@ -98,22 +119,61 @@ const HomePage: React.FC = () => {
     }
   }, [])
 
+  useEffect(() => {
+    if (lampRef.current) {
+      lampRef.current.intensity = lamp
+    }
+  }, [lamp])
+
   return (
     <div
       ref={mountRef}
       style={{
         width: '500px',
-        height: '400px',
+        height: '500px',
         borderRadius: '8px',
         borderStyle: 'dashed',
         borderColor: 'white',
-        borderWidth: '2px',
+        //borderWidth: '2px',
         overflow: 'hidden',
         right: '10%',
         top: '20%',
         position: 'absolute'
       }}
     >
+      <button
+        type="button"
+        aria-label="Decrease X"
+        onClick={() => {setLamp(lamp - intensityStep)}}
+        style={{
+          width: '32px',
+          height: '32px',
+          fontSize: '20px',
+          borderRadius: '4px',
+          border: '1px solid #ccc',
+          background: 'blue',
+          cursor: 'pointer'
+        }}
+      >
+        –
+      </button>
+
+      <button
+        type="button"
+        aria-label="Increase X"
+        onClick={() => {setLamp(lamp + intensityStep)}}
+        style={{
+          width: '32px',
+          height: '32px',
+          fontSize: '20px',
+          borderRadius: '4px',
+          border: '1px solid #ccc',
+          background: 'blue',
+          cursor: 'pointer'
+        }}
+      >
+        +
+      </button>
     </div>
   )
 }
