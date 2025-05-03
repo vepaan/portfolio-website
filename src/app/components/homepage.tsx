@@ -48,12 +48,11 @@ const HomePage: React.FC = () => {
 
     const lampMesh = new THREE.Mesh(lampGeo, lampMat)
     lampMesh.position.set(0.26, 0.95, 0.53)
-    scene.add(lampMesh)
 
     const lampLight = new THREE.PointLight(0xffffaa, 1, 2, 2)
     lampLight.position.copy(lampMesh.position)
-    scene.add(lampLight)
     lampRef.current = lampLight // stash into my ref
+    scene.add(lampLight)
 
     const controls = new OrbitControls(camera, renderer.domElement)
     controls.target.set(0, 0.6, 0)
@@ -69,6 +68,8 @@ const HomePage: React.FC = () => {
         const model = gltf.scene
         model.scale.setScalar(0.13)
         scene.add(model)
+        // only load light mesh after model
+        scene.add(lampMesh)
       },
       (event: ProgressEvent<EventTarget>) => {
         const loaded = event.loaded
