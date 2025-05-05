@@ -5,7 +5,7 @@ import * as THREE from 'three'
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls'
 
-const HomePage: React.FC = () => {
+const ThreeDSim: React.FC = () => {
   const [lamp, setLamp] = useState(1)
   const lampRef = useRef<THREE.PointLight | null>(null)
   const intensityStep = 0.3
@@ -137,9 +137,6 @@ const HomePage: React.FC = () => {
         borderColor: 'white',
         //borderWidth: '2px',
         overflow: 'hidden',
-        right: '10%',
-        top: '20%',
-        position: 'absolute'
       }}
     >
       <button
@@ -179,4 +176,4 @@ const HomePage: React.FC = () => {
   )
 }
 
-export default HomePage
+export default ThreeDSim
